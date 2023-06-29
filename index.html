@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="shortcut icon" href="love.png" type="image/x-icon">
+    <title></title>
+</head>
+<body>
+    <div id="left">
+        <div id="home">
+            <img src="love.png" id="logo">
+        </div>
+        <aside></aside>
+        <div id="musicControl">&#xe602;</div>
+    </div>
+    <main>
+        <div id="date"></div>
+    </main>
+    <div id="music">
+        <div class="return">&#xe000</div>
+    </div>
+    <script>
+        const title = '笨蛋日记';
+    </script>
+    <script src="js/main.js"></script>
+    <script src="js/LMusic.js"></script>
+    <script>
+        const music = new LMusic({
+            container: '#music',
+            src: 'LMusic',
+            music: [{
+                src: '/music/サマータイムラブ - Shiggy Jr..mp3',
+                cover: '/cover/サマータイムラブ - Shiggy Jr..jpg',
+                lyric: '/lyric/サマータイムラブ - Shiggy Jr..lmlrc'
+            }],
+            autoPlay: true
+        });
+    </script>
+</body>
+</html>
