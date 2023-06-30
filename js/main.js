@@ -73,6 +73,13 @@ const createMonthsButton = (months, monthsContainer, year) => {
                 } else {
                     monthContainer.classList.add('hide');
                 }
+                const monthContainers = document.querySelectorAll('.monthContainer');
+                for (const i of monthContainers) {
+                    if (i != monthContainer && !i.classList.contains('hide')) {
+                        i.classList.add('hide');
+                    }
+                }
+                monthsContainer.scrollTop = monthContainer.offsetTop - monthContainers[0].offsetTop;
             }
         });
         month.className = 'month';

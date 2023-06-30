@@ -12,13 +12,23 @@
     -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
+:root {
+    --background: #E56F8F;
+    --color: #EEEEEE;
+    --main_background: #A52F4F;
+    --home_background: #B53F5F;
+    --yearContainer_background: #B53F5F;
+    --monthContainer_background: #C54F6F;
+    --day_background: #D55F7F;
+}
+
 html, body {
     display: flex;
     margin: 0;
     width: 100%;
     height: 100%;
-    background: #222222;
-    color: #EEEEEE;
+    background: var(--background);
+    color: var(--color);
     overflow: hidden;
     -webkit-user-select: none;
     user-select: none;
@@ -33,7 +43,7 @@ html, body {
     flex-direction: column;
     width: 15%;
     height: 100%;
-    background: #333333;
+    background: var(--main_background);
     justify-content: center;
     align-items: center;
 }
@@ -44,7 +54,7 @@ html, body {
     font-size: 1.5vw;
     line-height: 2em;
     text-align: center;
-    background: #444444;
+    background: var(--home_background);
     cursor: pointer;
 }
 
@@ -60,7 +70,7 @@ aside {
     flex-direction: column;
     width: 100%;
     height: calc(100% - 9vw);
-    background: #333333;
+    background: var(--main_background);
     justify-content: center;
     align-items: center;
 }
@@ -69,7 +79,6 @@ aside {
     font-family: LMusicBtnFont;
     display: flex;
     font-size: 4vh;
-    background: #444444;
     border-radius: 50%;
     cursor: pointer;
     justify-content: center;
@@ -80,7 +89,7 @@ aside {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background: #444444;
+    background: var(--yearContainer_background);
     align-items: center;
     cursor: pointer;
 }
@@ -104,7 +113,7 @@ aside {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background: #555555;
+    background: var(--monthContainer_background);
     align-items: center;
 }
 
@@ -129,7 +138,7 @@ aside {
 .day {
     display: flex;
     width: 100%;
-    background: #666666;
+    background: var(--day_background);
     font-size: 1.25vw;
     line-height: 2em;
     justify-content: center;
@@ -154,7 +163,7 @@ main {
     padding: 2vw;
     width: 70%;
     max-height: 80%;
-    background: #333333;
+    background: var(--main_background);
     border-radius: 1vw;
     overflow: auto;
 }
@@ -176,7 +185,8 @@ main {
     display: flex;
     width: 100%;
     height: 100%;
-    background: #222222;
+    background: var(--main_background);
+    color: var(--color);
     transform: translateY(-100%);
     transition: all 1s;
 }
