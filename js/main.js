@@ -29,12 +29,15 @@ const getText = (year, month, day) => {
         while (document.querySelector('.text')) {
             main.removeChild(document.querySelector('.text'));
         }
+        let length = 0;
         for (const index in text) {
             const line = document.createElement('div');
             line.className = 'text';
             line.innerHTML = text[index];
+            length += text[index].length;
             main.appendChild(line);
         }
+        document.querySelector('#length').innerHTML = `共${length}字`;
     });
 };
 
@@ -141,6 +144,7 @@ const init = () => {
     home.addEventListener('click', () => {
         const main = document.querySelector('main');
         date.innerHTML = title;
+        document.querySelector('#length').innerHTML = '';
         while (document.querySelector('.text')) {
             main.removeChild(document.querySelector('.text'));
         }

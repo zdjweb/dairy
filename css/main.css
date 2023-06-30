@@ -13,13 +13,13 @@
 }
 
 :root {
-    --background: #E56F8F;
+    --background: hsl(335, 50%, 80%);
     --color: #EEEEEE;
-    --main_background: #A52F4F;
-    --home_background: #B53F5F;
-    --yearContainer_background: #B53F5F;
-    --monthContainer_background: #C54F6F;
-    --day_background: #D55F7F;
+    --main_background: hsl(335, 80%, 35%);
+    --home_background: hsl(335, 70%, 40%);
+    --yearContainer_background: hsl(335, 70%, 40%);
+    --monthContainer_background: hsl(335, 60%, 45%);
+    --day_background: hsl(335, 50%, 50%);
 }
 
 html, body {
@@ -168,10 +168,20 @@ main {
     overflow: auto;
 }
 
+#info {
+    text-align: center;
+}
+
 #date {
+    display: inline-block;
     font-size: 2vw;
     line-height: 2em;
-    text-align: center;
+}
+
+#length {
+    display: inline-block;
+    font-size: 1.25vw;
+    line-height: 4vw;
 }
 
 .text {
