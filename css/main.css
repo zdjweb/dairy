@@ -16,10 +16,10 @@
     --background: hsl(335, 50%, 80%);
     --color: #EEEEEE;
     --main_background: hsl(335, 80%, 35%);
-    --home_background: hsl(335, 70%, 40%);
-    --yearContainer_background: hsl(335, 70%, 40%);
+    --first_background: hsl(335, 70%, 40%);
     --monthContainer_background: hsl(335, 60%, 45%);
     --day_background: hsl(335, 50%, 50%);
+    --title_length: 0;
 }
 
 html, body {
@@ -54,13 +54,13 @@ html, body {
     font-size: 1.5vw;
     line-height: 2em;
     text-align: center;
-    background: var(--home_background);
+    background: var(--first_background);
     cursor: pointer;
 }
 
 #logo {
     margin: 0.75vw;
-    margin-left: calc((100% - 6vw - 1.5vw - 0.75vw) /2);
+    margin-left: calc((100% - var(--title_length) * 1.5vw - 1.5vw - 0.75vw) /2);
     width: 1.5vw;
     height: 1.5vw;
 }
@@ -78,18 +78,33 @@ aside {
 #musicControl {
     font-family: LMusicBtnFont;
     display: flex;
-    font-size: 4vh;
-    border-radius: 50%;
-    cursor: pointer;
+    padding: 0 2vh;
+    width: calc(100% - 4vh);
+    background: var(--first_background);
     justify-content: center;
     align-items: center;
+}
+
+#musicControl .btn {
+    font-size: 1.5vw;
+    line-height: 2em;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#lyric {
+    flex: 1;
+    padding-left: 1vh;
+    font-size: 1vw;
+    line-height: 1.5em;
+    cursor: pointer;
 }
 
 .yearContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background: var(--yearContainer_background);
+    background: var(--first_background);
     align-items: center;
     cursor: pointer;
 }

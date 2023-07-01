@@ -13,7 +13,10 @@
             <img src="love.png" id="logo">
         </div>
         <aside></aside>
-        <div id="musicControl">&#xe602;</div>
+        <div id="musicControl">
+            <div class="btn">&#xe602;</div>
+            <div id="lyric">笨蛋dj的歌</div>
+        </div>
     </div>
     <main>
         <div id="info">
@@ -22,7 +25,7 @@
         </div>
     </main>
     <div id="music">
-        <div class="return">&#xe000</div>
+        <div class="return">&#xe000;</div>
     </div>
     <script>
         const title = '笨蛋日记';
@@ -39,6 +42,20 @@
                 lyric: '/lyric/サマータイムラブ - Shiggy Jr..lmlrc'
             }],
             autoPlay: true
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+            const btn = document.querySelector('#musicControl').querySelector('.btn'),
+            lyric = document.querySelector('#lyric');
+            music.functions.stateChange.add((paused) => {
+                if (paused) {
+                    btn.innerHTML = '&#xe602;';
+                } else {
+                    btn.innerHTML = '&#xe603;';
+                }
+            });
+            music.functions.lyricChange.add((lyricText) => {
+                lyric.innerHTML = lyricText;
+            });
         });
     </script>
 </body>

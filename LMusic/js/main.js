@@ -228,6 +228,10 @@
                     } else {
                         text.style.setProperty('--move', `calc(${move}px - ${lineHeight}px)`);
                     }
+                    window.parent.postMessage({
+                        type: 'lyric',
+                        data: nowWord.innerText
+                    });
                 }
             },
             // 歌词显示范围设置

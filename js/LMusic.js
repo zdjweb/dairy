@@ -155,11 +155,25 @@ const LMusic = (() => {
             return '2002-2003';
         }
         static get version() {
-            return '2.0.0';
+            return '2.0.1';
         }
         constructor({container, src, music, autoPlay}) {
             const init = () => {
-                LMusic[this] = {};
+                const that = LMusic[this] = {};
+                that.functions = {
+                    stateChange: {
+                        functions: [],
+                        add(newFunction) {
+                            this.functions.push(newFunction);
+                        }
+                    },
+                    lyricChange: {
+                        functions: [],
+                        add(newFunction) {
+                            this.functions.push(newFunction);
+                        }
+                    }
+                };
                 this.srcSet(src);
                 this.containerSet(container);
             };
@@ -194,6 +208,13 @@ const LMusic = (() => {
                     }
                 } else if (type == 'paused') {
                     LMusic[this].paused = data;
+                    for (const i of LMusic[this].functions.stateChange.functions) {
+                        i(data);
+                    }
+                } else if (type == 'lyric') {
+                    for (const i of LMusic[this].functions.lyricChange.functions) {
+                        i(data);
+                    }
                 }
             });
             if (document.readyState == 'loading') {
@@ -242,6 +263,9 @@ const LMusic = (() => {
                 return audio.duration;
             }
             return 0;
+        }
+        get functions() {
+            return LMusic[this].functions;
         }
         get containerSet() {
             return LMusic.containerSet;

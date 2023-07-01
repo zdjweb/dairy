@@ -136,6 +136,8 @@ const getYears = () => {
 const init = () => {
     const home = document.querySelector('#home'),
     musicControl = document.querySelector('#musicControl'),
+    btn = musicControl.querySelector('.btn'),
+    lyric = document.querySelector('#lyric'),
     date = document.querySelector('#date'),
     homeTitle = document.createElement('div');
     document.title = title;
@@ -149,29 +151,21 @@ const init = () => {
             main.removeChild(document.querySelector('.text'));
         }
     });
-    musicControl.addEventListener('click', () => {
+    document.querySelector('#logo').style.setProperty('--title_length', title.length);
+    btn.addEventListener('click', () => {
         if (music.paused) {
             music.play();
-            musicControl.innerHTML = '&#xe603;';
         } else {
             music.pause();
-            musicControl.innerHTML = '&#xe602;';
         }
     });
-    musicControl.addEventListener('contextmenu', (e) => {
+    lyric.addEventListener('click', (e) => {
         document.querySelector('#music').style.transform = 'translateY(0)';
         e.preventDefault();
     });
     document.querySelector('#music').querySelector('.return').addEventListener('click', () => {
         document.querySelector('#music').style.transform = 'translateY(-100%)';
     });
-    setInterval(() => {
-        if (music.paused) {
-            musicControl.innerHTML = '&#xe602;';
-        } else {
-            musicControl.innerHTML = '&#xe603;';
-        }
-    }, 1000);
     date.innerHTML = title;
     getYears();
 };
