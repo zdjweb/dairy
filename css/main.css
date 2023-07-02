@@ -19,8 +19,7 @@
     --first_background: hsl(335, 70%, 40%);
     --monthContainer_background: hsl(335, 60%, 45%);
     --dayContainer_background: hsl(335, 50%, 50%);
-    --day_background: hsla(335, 40%, 60%, 0.5);
-    --day_hover_background: hsla(335, 40%, 80%, 0.5);
+    --day_hover_background: hsl(335, 40%, 65%);
 }
 
 html, body {
@@ -173,14 +172,19 @@ aside {
     width: 2vw;
     height: 2vw;
     font-size: 1vw;
-    background: var(--day_background);
     border-radius: 50%;
     justify-content: center;
     align-items: center;
 }
 
 .day:hover {
-    background: var(--day_hover_background);
+    box-shadow: 0 0 0 0.1vw var(--color);
+}
+
+.day.now {
+    background: var(--color);
+    color: var(--dayContainer_background);
+    box-shadow: none;
 }
 
 .hide .monthContainer {

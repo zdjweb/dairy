@@ -60,7 +60,12 @@ const createDaysButton = (days, monthContainer, month, year) => {
         day.className = 'day';
         day.innerHTML = dayNumber;
         day.addEventListener('click', () => {
+            const now = document.querySelector('.now');
             getText(year, month, dayNumber);
+            if (now) {
+                now.classList.remove('now');
+            }
+            day.classList.add('now');
         });
         dayContainers[Math.floor(i++ / 5)].appendChild(day);
     }
@@ -173,6 +178,7 @@ const init = () => {
     homeTitle.innerHTML = `&nbsp;${title}`;
     home.addEventListener('click', () => {
         const main = document.querySelector('main');
+        document.querySelector('.now').classList.remove('now');
         date.innerHTML = title;
         document.querySelector('#length').innerHTML = '';
         while (document.querySelector('.text')) {
