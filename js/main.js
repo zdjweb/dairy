@@ -1,3 +1,4 @@
+// get方法请求
 const get = (path, callback, ...args) => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', path);
@@ -14,6 +15,7 @@ const get = (path, callback, ...args) => {
     xhr.send();
 };
 
+// 移除字符串中对应的所有子字符串
 const deleteAll = (str1, str2) => {
     while (str1.includes(str2)) {
         str1 = str1.replace(str2, '');
@@ -21,6 +23,7 @@ const deleteAll = (str1, str2) => {
     return str1;
 };
 
+// 获取日记文本
 const getText = (year, month, day) => {
     get(`page/${year}/${month}/${day}.txt`, (text) => {
         const main = document.querySelector('main');
@@ -41,21 +44,30 @@ const getText = (year, month, day) => {
     });
 };
 
+// 创造日期按钮
 const createDaysButton = (days, monthContainer, month, year) => {
-    const dayContainer = document.createElement('div');
+    const dayContainer = document.createElement('div'),
+    dayContainers = [];
     dayContainer.className = 'dayContainer';
+    for (let i = 0; i < Math.ceil(days.length / 5); i++) {
+        dayContainers[i] = document.createElement('div');
+        dayContainers[i].className = 'dayContainers';
+        dayContainer.appendChild(dayContainers[i]);
+    }
+    let i = 0;
     for (const dayNumber of days) {
         const day = document.createElement('div');
         day.className = 'day';
-        day.innerHTML = dayNumber + '日';
+        day.innerHTML = dayNumber;
         day.addEventListener('click', () => {
             getText(year, month, dayNumber);
         });
-        dayContainer.appendChild(day);
+        dayContainers[Math.floor(i++ / 5)].appendChild(day);
     }
     monthContainer.appendChild(dayContainer);
 };
 
+// 获取日期信息
 const getDays = (month, monthContainer, year) => {
     get(`page/${year}/${month}/index.txt`, (days) => {
         days = deleteAll(days, '\r').split('\n');
@@ -63,6 +75,7 @@ const getDays = (month, monthContainer, year) => {
     });
 };
 
+// 创造月份按钮
 const createMonthsButton = (months, monthsContainer, year) => {
     for (const monthNumber of months) {
         const monthContainer = document.createElement('div'),
@@ -93,6 +106,7 @@ const createMonthsButton = (months, monthsContainer, year) => {
     }
 };
 
+// 获取月份信息
 const getMonths = (year, monthsContainer) => {
     get(`page/${year}/index.txt`, (months) => {
         months = deleteAll(months, '\r').split('\n');
@@ -100,6 +114,7 @@ const getMonths = (year, monthsContainer) => {
     });
 };
 
+// 创造年份按钮
 const createYearsButton = (years) => {
     for (const yearNumber of years) {
         const yearContainer = document.createElement('div'),
@@ -126,6 +141,7 @@ const createYearsButton = (years) => {
     }
 };
 
+// 获取年份信息
 const getYears = () => {
     get('page/index.txt', (years) => {
         years = deleteAll(years, '\r').split('\n');
@@ -133,16 +149,28 @@ const getYears = () => {
     });
 };
 
+// 初始化函数
 const init = () => {
     const home = document.querySelector('#home'),
     musicControl = document.querySelector('#musicControl'),
     btn = musicControl.querySelector('.btn'),
     lyric = document.querySelector('#lyric'),
     date = document.querySelector('#date'),
-    homeTitle = document.createElement('div');
+    homeTitle = home.querySelector('div'),
+    // 初始化LMusic
+    music = new LMusic({
+        container: '#music',
+        src: 'LMusic',
+        music: [{
+            src: `/music/${musicName}.ogg`,
+            cover: `/cover/${musicName}.jpg`,
+            lyric: `/lyric/${musicName}.lmlrc`
+        }],
+        autoPlay: true
+    });
     document.title = title;
-    homeTitle.innerHTML = title;
-    home.appendChild(homeTitle);
+    date.innerHTML = title;
+    homeTitle.innerHTML = `&nbsp;${title}`;
     home.addEventListener('click', () => {
         const main = document.querySelector('main');
         date.innerHTML = title;
@@ -151,7 +179,6 @@ const init = () => {
             main.removeChild(document.querySelector('.text'));
         }
     });
-    document.querySelector('#logo').style.setProperty('--title_length', title.length);
     btn.addEventListener('click', () => {
         if (music.paused) {
             music.play();
@@ -166,7 +193,19 @@ const init = () => {
     document.querySelector('#music').querySelector('.return').addEventListener('click', () => {
         document.querySelector('#music').style.transform = 'translateY(-100%)';
     });
-    date.innerHTML = title;
+    window.addEventListener('DOMContentLoaded', () => {
+        music.functions.stateChange.add((paused) => {
+            if (paused) {
+                btn.innerHTML = '&#xe602;';
+            } else {
+                btn.innerHTML = '&#xe603;';
+            }
+        });
+        music.functions.lyricChange.add((lyricText) => {
+            lyric.title = lyricText;
+            lyric.innerHTML = lyricText;
+        });
+    });
     getYears();
 };
 

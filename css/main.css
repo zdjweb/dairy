@@ -18,8 +18,9 @@
     --main_background: hsl(335, 80%, 35%);
     --first_background: hsl(335, 70%, 40%);
     --monthContainer_background: hsl(335, 60%, 45%);
-    --day_background: hsl(335, 50%, 50%);
-    --title_length: 0;
+    --dayContainer_background: hsl(335, 50%, 50%);
+    --day_background: hsla(335, 40%, 60%, 0.5);
+    --day_hover_background: hsla(335, 40%, 80%, 0.5);
 }
 
 html, body {
@@ -49,20 +50,20 @@ html, body {
 }
 
 #home {
+    font-family: 'btnFont';
     display: flex;
     width: 100%;
     font-size: 1.5vw;
     line-height: 2em;
     text-align: center;
     background: var(--first_background);
+    color: hsl(330, 70%, 55%);
     cursor: pointer;
+    justify-content: center;
 }
 
-#logo {
-    margin: 0.75vw;
-    margin-left: calc((100% - var(--title_length) * 1.5vw - 1.5vw - 0.75vw) /2);
-    width: 1.5vw;
-    height: 1.5vw;
+#home div {
+    color: var(--color);
 }
 
 aside {
@@ -94,10 +95,13 @@ aside {
 
 #lyric {
     flex: 1;
-    padding-left: 1vh;
+    margin-left: 1vh;
     font-size: 1vw;
-    line-height: 1.5em;
+    line-height: 3em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     cursor: pointer;
+    overflow: hidden;
 }
 
 .yearContainer {
@@ -120,7 +124,7 @@ aside {
 
 .monthsContainer {
     width: 100%;
-    max-height: 13vw;
+    max-height: calc((5vw / 6) * 4 + 9vw);
     overflow: auto;
 }
 
@@ -145,22 +149,38 @@ aside {
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-height: 10vw;
+    max-height: calc((5vw / 6) * 4 + 6vw);
+    background: var(--dayContainer_background);
     align-items: center;
     overflow: auto;
 }
 
-.day {
+.dayContainers {
     display: flex;
+    margin: calc((100% - 10vw) / 6) 0;
     width: 100%;
-    background: var(--day_background);
-    font-size: 1.25vw;
-    line-height: 2em;
-    justify-content: center;
 }
 
-.day ~ .day {
-    margin-top: 0.5vw;
+.dayContainers ~ .dayContainers {
+    display: flex;
+    margin: 0 0 calc((100% - 10vw) / 6);
+    width: 100%;
+}
+
+.day {
+    display: flex;
+    margin-left: calc((100% - 10vw) / 6);
+    width: 2vw;
+    height: 2vw;
+    font-size: 1vw;
+    background: var(--day_background);
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+}
+
+.day:hover {
+    background: var(--day_hover_background);
 }
 
 .hide .monthContainer {
@@ -185,6 +205,14 @@ main {
 
 #info {
     text-align: center;
+}
+
+.love {
+    font-family: 'btnFont';
+    display: inline-block;
+    font-size: 2vw;
+    line-height: 2em;
+    color: hsl(330, 70%, 55%);
 }
 
 #date {
