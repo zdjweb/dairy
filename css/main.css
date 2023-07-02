@@ -19,7 +19,6 @@
     --first_background: hsl(335, 70%, 40%);
     --monthContainer_background: hsl(335, 60%, 45%);
     --dayContainer_background: hsl(335, 50%, 50%);
-    --day_hover_background: hsl(335, 40%, 65%);
 }
 
 html, body {

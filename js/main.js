@@ -177,8 +177,11 @@ const init = () => {
     date.innerHTML = title;
     homeTitle.innerHTML = `&nbsp;${title}`;
     home.addEventListener('click', () => {
-        const main = document.querySelector('main');
-        document.querySelector('.now').classList.remove('now');
+        const now = document.querySelector('.now'),
+        main = document.querySelector('main');
+        if (now) {
+            now.classList.remove('now');
+        }
         date.innerHTML = title;
         document.querySelector('#length').innerHTML = '';
         while (document.querySelector('.text')) {
