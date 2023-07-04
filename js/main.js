@@ -55,7 +55,11 @@ const getText = (year, month, day) => {
 // 创造日期按钮
 const createDaysButton = (days, monthContainer, month, year) => {
     const dayContainer = document.createElement('div'),
-    dayContainers = [];
+    dayContainers = [],
+    hash = location.hash.replace('#', ''),
+    hashYear = hash.split('/')[0],
+    hashMonth = hash.split('/')[1],
+    hashDay = hash.split('/')[2];
     dayContainer.className = 'dayContainer';
     for (let i = 0; i < Math.ceil(days.length / 5); i++) {
         dayContainers[i] = document.createElement('div');
@@ -69,12 +73,15 @@ const createDaysButton = (days, monthContainer, month, year) => {
         day.innerHTML = dayNumber;
         day.addEventListener('click', () => {
             const now = document.querySelector('.now');
-            getText(year, month, dayNumber);
+            location.hash = `${year}/${month}/${dayNumber}`;
             if (now) {
                 now.classList.remove('now');
             }
             day.classList.add('now');
         });
+        if (year == hashYear && month == hashMonth && dayNumber == hashDay) {
+            day.classList.add('now');
+        }
         dayContainers[Math.floor(i++ / 5)].appendChild(day);
     }
     monthContainer.appendChild(dayContainer);
@@ -177,6 +184,65 @@ const setPromptText = (text) => {
         promptElement.classList.remove('show');
         promptElement.removeAttribute('timer');
     }, 2000));
+};
+
+// 朗读
+const speech = (needVoice) => {
+    let text = '',
+    played = document.body.getAttribute('played') == 'true',
+    lastText = document.body.getAttribute('lastText');
+    const textElement = document.querySelector('main').querySelectorAll('.text'),
+    msg = new SpeechSynthesisUtterance();
+    for (const i of textElement) {
+        if (text != '') {
+            text += '\r\n';
+        }
+        text += i.innerHTML;
+    }
+    if (text == '') {
+        text = `最爱${boyOrGirlFriend}啦~`;
+    }
+    if (lastText != text) {
+        window.speechSynthesis.cancel();
+        played = true;
+        msg.text = text;
+        msg.lang = 'zh-CN';
+        if (needVoice) {
+            msg.voice = needVoice;
+        }
+        window.speechSynthesis.speak(msg);
+        setPromptText('朗读已开始');
+    } else {
+        if (played) {
+            window.speechSynthesis.pause();
+            setPromptText('朗读已暂停');
+        } else {
+            window.speechSynthesis.resume();
+            setPromptText('朗读已恢复');
+        }
+        played = !played;
+    }
+    document.body.setAttribute('played', played);
+    document.body.setAttribute('lastText', text);
+    msg.addEventListener('end', () => {
+        document.body.setAttribute('played', false);
+        document.body.removeAttribute('lastText');
+        setPromptText('朗读已结束');
+    });
+}
+
+// 复制
+const copy = () => {
+    let text = '';
+    const textElement = document.querySelector('main').querySelectorAll('.text');
+    for (const i of textElement) {
+        if (text != '') {
+            text += '\r\n';
+        }
+        text += i.innerHTML;
+    }
+    navigator.clipboard.writeText(text);
+    setPromptText('复制成功');
 };
 
 // 截图
@@ -298,7 +364,7 @@ const screenshot = () => {
     }
 }
 
-// 下载日记
+// 下载
 const download = () => {
     const a = document.createElement('a'),
     year = document.body.getAttribute('year'),
@@ -309,6 +375,30 @@ const download = () => {
         a.download = `${title}-${year}年${month}月${day}日.txt`;
         a.click();
         setPromptText('正在下载');
+    }
+};
+
+// 分享
+const share = () => {
+    const year = document.body.getAttribute('year'),
+    month = document.body.getAttribute('month'),
+    day = document.body.getAttribute('day');
+    if (year) {
+        navigator.clipboard.writeText(`${location.origin}/#${year}/${month}/${day}`);
+    } else {
+        navigator.clipboard.writeText(location.origin);
+    }
+    setPromptText('分享链接已复制');
+};
+
+// hash值改变时改变页面
+const pageChange = () => {
+    const hash = location.hash.replace('#', ''),
+    year = hash.split('/')[0],
+    month = hash.split('/')[1],
+    day = hash.split('/')[2];
+    if (hash) {
+        getText(year, month, day);
     }
 };
 
@@ -348,6 +438,7 @@ const init = () => {
         document.body.removeAttribute('year');
         document.body.removeAttribute('month');
         document.body.removeAttribute('day');
+        location.hash = '';
     });
     playBtn.addEventListener('click', () => {
         if (music.paused) {
@@ -360,84 +451,40 @@ const init = () => {
         document.querySelector('#music').style.transform = 'translateY(0)';
         e.preventDefault();
     });
-    btn[0].addEventListener('click', screenshot);
+    // 判断浏览器是否支持朗读 不支持则隐藏按钮
     if ('speechSynthesis' in window) {
-        let voices,
-        needVoices,
-        played = false,
-        lastText;
+        let needVoice;
+        document.body.setAttribute('played', false);
+        btn[0].addEventListener('click', () => {
+            speech(needVoice);
+        });
         const timer = setInterval(() => {
-            voices = speechSynthesis.getVoices();
+            const voices = speechSynthesis.getVoices();
             if (voices.length > 0) {
                 for (const i of voices) {
                     if (i.lang == 'zh-CN' && i.name.includes('Xiaoyi')) {
-                        needVoices = i;
+                        needVoice = i;
                         break;
                     }
                 }
-                if (!needVoices) {
+                if (!needVoice) {
                     for (const i of voices) {
                         if (i.lang == 'zh-CN') {
-                            needVoices = i;
+                            needVoice = i;
                             break;
                         }
                     }
                 }
-                btn[1].addEventListener('click', () => {
-                    let text = '';
-                    const textElement = document.querySelector('main').querySelectorAll('.text'),
-                    msg = new SpeechSynthesisUtterance();
-                    for (const i of textElement) {
-                        if (text != '') {
-                            text += '\r\n';
-                        }
-                        text += i.innerHTML;
-                    }
-                    if (text == '') {
-                        text = `最爱${boyOrGirlFriend}啦~`;
-                    }
-                    if (lastText != text) {
-                        window.speechSynthesis.cancel();
-                        played = true;
-                        msg.text = text;
-                        msg.lang = 'zh-CN';
-                        msg.voice = needVoices;
-                        window.speechSynthesis.speak(msg);
-                        setPromptText('朗读已开始');
-                    } else {
-                        if (played) {
-                            window.speechSynthesis.pause();
-                            setPromptText('朗读已暂停');
-                        } else {
-                            window.speechSynthesis.resume();
-                            setPromptText('朗读已恢复');
-                        }
-                        played = !played;
-                    }
-                    lastText = text;
-                    msg.addEventListener('end', () => {
-                        played = false;
-                        lastText = null;
-                        setPromptText('朗读已结束');
-                    });
-                });
                 clearInterval(timer);
             }
         }, 1000);
+    } else {
+        btn[0].classList.add('hide');
     }
-    btn[2].addEventListener('click', () => {
-        let text = '';
-        const textElement = document.querySelector('main').querySelectorAll('.text');
-        for (const i of textElement) {
-            if (text != '') {
-                text += '\r\n';
-            }
-            text += i.innerHTML;
-        }
-        navigator.clipboard.writeText(text);
-        setPromptText('复制成功');
-    });
+    btn[1].addEventListener('click', copy);
+    btn[2].addEventListener('click', screenshot);
     btn[3].addEventListener('click', download);
+    btn[4].addEventListener('click', share);
     document.querySelector('#music').querySelector('.return').addEventListener('click', () => {
         document.querySelector('#music').style.transform = 'translateY(-100%)';
     });
@@ -454,7 +501,9 @@ const init = () => {
             lyric.innerHTML = lyricText;
         });
     });
+    window.addEventListener('hashchange', pageChange);
     getYears();
+    pageChange();
 };
 
 init();

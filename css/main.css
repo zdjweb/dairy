@@ -1,10 +1,10 @@
 @font-face {
-    font-family: btnFont;
+    font-family: 'btnFont';
     src: url('/font/btnFont.woff2');
 }
 
 @font-face {
-    font-family: LMusicBtnFont;
+    font-family: 'LMusicBtnFont';
     src: url('/LMusic/font/btnFont.woff2');
 }
 
@@ -75,7 +75,7 @@ aside {
 }
 
 #musicControl {
-    font-family: LMusicBtnFont;
+    font-family: 'LMusicBtnFont';
     display: flex;
     padding: 0 2vh;
     width: calc(100% - 4vh);
@@ -249,7 +249,7 @@ main {
 }
 
 #btnBox .btn {
-    font-family: btnFont;
+    font-family: 'btnFont';
     display: flex;
     margin: 1vw;
     margin-top: 0;
@@ -264,6 +264,10 @@ main {
     cursor: pointer;
 }
 
+#btnBox .btn.hide {
+    display: none;
+}
+
 #prompt {
     --length: 0;
     position: fixed;
@@ -272,6 +276,7 @@ main {
     bottom: 1vw;
     padding: 0 0.5vw;
     height: 2vw;
+    font-size: 1vw;
     border-radius: 1vw;
     background: var(--first_background);
     align-items: center;
@@ -293,7 +298,7 @@ main {
 }
 
 #music .return {
-    font-family: btnFont;
+    font-family: 'btnFont';
     position: absolute;
     left: 2vh;
     bottom: 2vh;
