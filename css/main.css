@@ -103,12 +103,8 @@ aside {
 }
 
 .yearContainer {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     background: var(--first_background);
-    align-items: center;
-    cursor: pointer;
 }
 
 .yearContainer ~ .yearContainer {
@@ -116,8 +112,12 @@ aside {
 }
 
 .year {
+    display: flex;
+    width: 100%;
     font-size: 2vw;
     line-height: 2em;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .monthsContainer {
@@ -127,11 +127,8 @@ aside {
 }
 
 .monthContainer {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     background: var(--monthContainer_background);
-    align-items: center;
 }
 
 .monthContainer ~ .monthContainer {
@@ -139,8 +136,12 @@ aside {
 }
 
 .month {
+    display: flex;
+    width: 100%;
     font-size: 1.5vw;
     line-height: 2em;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .dayContainer {
@@ -174,6 +175,7 @@ aside {
     border-radius: 50%;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .day:hover {
@@ -234,6 +236,49 @@ main {
     font-size: 1.5vw;
     line-height: 2em;
     text-indent: 2em;
+}
+
+#btnBox {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    bottom: 0;
+    right: 0;
+    width: 5vw;
+    align-items: center;
+}
+
+#btnBox .btn {
+    font-family: btnFont;
+    display: flex;
+    margin: 1vw;
+    margin-top: 0;
+    width: 3vw;
+    height: 3vw;
+    border-radius: 50%;
+    background: var(--first_background);
+    color: var(--color);
+    font-size: 1.5vw;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#prompt {
+    --length: 0;
+    position: fixed;
+    display: none;
+    right: calc((85% - 1vw * var(--length)) / 2);
+    bottom: 1vw;
+    padding: 0 0.5vw;
+    height: 2vw;
+    border-radius: 1vw;
+    background: var(--first_background);
+    align-items: center;
+}
+
+#prompt.show {
+    display: flex;
 }
 
 #music {
