@@ -1,3 +1,97 @@
+// 按钮对象
+class Btn {
+    constructor(element, fun) {
+        this.element = element;
+        this.fun = fun;
+        this.bind();
+    }
+
+    bind() {
+        this.element.addEventListener('click', this.fun);
+    }
+
+    unbind() {
+        this.element.removeEventListener('click', this.fun);
+    }
+}
+
+// 日期按钮对象
+class DayContainer extends Btn {
+    constructor(parent, hashDay, day, month, year) {
+        
+    }
+}
+
+// 月份按钮对象
+class MonthContainer extends Btn {
+    constructor(parent, hashMonth, month, year) {
+        const element = document.createElement('div'),
+        children = document.createElement('div');
+        element.classList.add('monthContainer');
+        if (hashMonth != month) {
+            element.classList.add('hide');
+        }
+        children.className = 'month';
+        children.innerHTML = `${month}月`;
+        element.appendChild(children);
+        parent.appendChild(element);
+        getDays(month, element, year);
+        super(element, (event) => {
+            const parent = this.parent,
+            element = this.element,
+            children = this.children;
+            if (event.target == element || event.target == children) {
+                if (element.classList.contains('hide')) {
+                    element.classList.remove('hide');
+                } else {
+                    element.classList.add('hide');
+                }
+                const monthContainers = document.querySelectorAll('.monthContainer');
+                for (const i of monthContainers) {
+                    if (i != element && !i.classList.contains('hide')) {
+                        i.classList.add('hide');
+                    }
+                }
+                parent.scrollTop = element.offsetTop - monthContainers[0].offsetTop;
+            }
+        });
+        this.parent = parent;
+        this.children = children;
+    }
+}
+
+// 年份按钮对象
+class YearContainer extends Btn {
+    constructor(hashYear, year) {
+        const element = document.createElement('div'),
+        children = document.createElement('div'),
+        monthsContainer = document.createElement('div');
+        element.classList.add('yearContainer');
+        if (hashYear != year) {
+            element.classList.add('hide');
+        }
+        children.className = 'year';
+        children.innerHTML = `${year}年`;
+        element.appendChild(children);
+        monthsContainer.className = 'monthsContainer';
+        element.appendChild(monthsContainer);
+        document.querySelector('aside').appendChild(element);
+        getMonths(year, monthsContainer);
+        super(element, (event) => {
+            const element = this.element,
+            children = this.children;
+            if (event.target == element || event.target == children) {
+                if (element.classList.contains('hide')) {
+                    element.classList.remove('hide');
+                } else {
+                    element.classList.add('hide');
+                }
+            }
+        });
+        this.children = children;
+    }
+}
+
 // get方法请求
 const get = (path, callback, ...args) => {
     const xhr = new XMLHttpRequest();
@@ -30,9 +124,6 @@ const deleteAll = (str1, str2) => {
 
 // 获取日记文本
 const getText = (year, month, day) => {
-    document.body.setAttribute('year', year);
-    document.body.setAttribute('month', month);
-    document.body.setAttribute('day', day);
     get(`page/${year}/${month}/${day}.txt`, (text) => {
         const main = document.querySelector('main');
         document.querySelector('#date').innerHTML = `${year}年${month}月${day}日`;
@@ -56,17 +147,18 @@ const getText = (year, month, day) => {
 const createDaysButton = (days, monthContainer, month, year) => {
     const dayContainer = document.createElement('div'),
     dayContainers = [],
-    hash = location.hash.replace('#', ''),
-    hashYear = hash.split('/')[0],
-    hashMonth = hash.split('/')[1],
-    hashDay = hash.split('/')[2];
+    hashYear = document.body.getAttribute('year'),
+    hashMonth = document.body.getAttribute('month'),
+    hashDay = document.body.getAttribute('day');
     dayContainer.className = 'dayContainer';
     for (let i = 0; i < Math.ceil(days.length / 5); i++) {
         dayContainers[i] = document.createElement('div');
         dayContainers[i].className = 'dayContainers';
         dayContainer.appendChild(dayContainers[i]);
     }
-    let i = 0;
+    let i = 0,
+    needDayLine;
+    monthContainer.appendChild(dayContainer);
     for (const dayNumber of days) {
         const day = document.createElement('div');
         day.className = 'day';
@@ -81,10 +173,18 @@ const createDaysButton = (days, monthContainer, month, year) => {
         });
         if (year == hashYear && month == hashMonth && dayNumber == hashDay) {
             day.classList.add('now');
+            needDayLine = Math.floor(i / 5);
         }
         dayContainers[Math.floor(i++ / 5)].appendChild(day);
     }
-    monthContainer.appendChild(dayContainer);
+    if (hashYear == year && hashMonth == month) {
+        const monthContainers = monthContainer.parentElement;
+        monthContainers.scrollTop = monthContainer.offsetTop - monthContainers.querySelector('.monthContainer').offsetTop;
+        if (needDayLine) {
+            dayContainer.scrollTop = dayContainers[needDayLine].offsetTop - dayContainers[0].offsetTop;;
+        }
+    }
+    document.querySelector('aside').classList.remove('hide');
 };
 
 // 获取日期信息
@@ -95,77 +195,29 @@ const getDays = (month, monthContainer, year) => {
     });
 };
 
-// 创造月份按钮
-const createMonthsButton = (months, monthsContainer, year) => {
-    for (const monthNumber of months) {
-        const monthContainer = document.createElement('div'),
-        month = document.createElement('div');
-        monthContainer.classList.add('monthContainer');
-        monthContainer.classList.add('hide');
-        monthContainer.addEventListener('click', (event) => {
-            if (event.target == monthContainer || event.target == month) {
-                if (monthContainer.classList.contains('hide')) {
-                    monthContainer.classList.remove('hide');
-                } else {
-                    monthContainer.classList.add('hide');
-                }
-                const monthContainers = document.querySelectorAll('.monthContainer');
-                for (const i of monthContainers) {
-                    if (i != monthContainer && !i.classList.contains('hide')) {
-                        i.classList.add('hide');
-                    }
-                }
-                monthsContainer.scrollTop = monthContainer.offsetTop - monthContainers[0].offsetTop;
-            }
-        });
-        month.className = 'month';
-        month.innerHTML = monthNumber + '月';
-        monthContainer.appendChild(month);
-        monthsContainer.appendChild(monthContainer);
-        getDays(monthNumber, monthContainer, year);
-    }
-};
-
 // 获取月份信息
 const getMonths = (year, monthsContainer) => {
     get(`page/${year}/index.txt`, (months) => {
         months = deleteAll(months, '\r').split('\n');
-        createMonthsButton(months, monthsContainer, year);
+        // 获取需要的月份
+        const hashMonth = document.body.getAttribute('month');
+        // 创造月份按钮
+        for (const month of months) {
+            new MonthContainer(monthsContainer, hashMonth, month, year);
+        }
     });
-};
-
-// 创造年份按钮
-const createYearsButton = (years) => {
-    for (const yearNumber of years) {
-        const yearContainer = document.createElement('div'),
-        year = document.createElement('div'),
-        monthsContainer = document.createElement('div');
-        yearContainer.classList.add('yearContainer');
-        yearContainer.classList.add('hide');
-        yearContainer.addEventListener('click', (event) => {
-            if (event.target == yearContainer || event.target == year) {
-                if (yearContainer.classList.contains('hide')) {
-                    yearContainer.classList.remove('hide');
-                } else {
-                    yearContainer.classList.add('hide');
-                }
-            }
-        });
-        year.className = 'year';
-        year.innerHTML = yearNumber + '年';
-        yearContainer.appendChild(year);
-        monthsContainer.className = 'monthsContainer';
-        yearContainer.appendChild(monthsContainer);
-        document.querySelector('aside').appendChild(yearContainer);
-        getMonths(yearNumber, monthsContainer, year);
-    }
 };
 
 // 获取年份信息
 const getYears = () => {
     get('page/index.txt', (years) => {
         years = deleteAll(years, '\r').split('\n');
-        createYearsButton(years);
+        // 获取需要的年份
+        const hashYear = document.body.getAttribute('year');
+        // 创造年份按钮
+        for (const year of years) {
+            new YearContainer(hashYear, year);
+        }
     });
 };
 
@@ -193,6 +245,16 @@ const speech = (needVoice) => {
     lastText = document.body.getAttribute('lastText');
     const textElement = document.querySelector('main').querySelectorAll('.text'),
     msg = new SpeechSynthesisUtterance();
+    msg.addEventListener('start', () => {
+        document.body.setAttribute('played', true);
+        document.body.setAttribute('lastText', text);
+        setPromptText('朗读已开始');
+    });
+    msg.addEventListener('end', () => {
+        document.body.setAttribute('played', false);
+        document.body.removeAttribute('lastText');
+        setPromptText('朗读已结束');
+    });
     for (const i of textElement) {
         if (text != '') {
             text += '\r\n';
@@ -204,14 +266,12 @@ const speech = (needVoice) => {
     }
     if (lastText != text) {
         window.speechSynthesis.cancel();
-        played = true;
         msg.text = text;
         msg.lang = 'zh-CN';
         if (needVoice) {
             msg.voice = needVoice;
         }
         window.speechSynthesis.speak(msg);
-        setPromptText('朗读已开始');
     } else {
         if (played) {
             window.speechSynthesis.pause();
@@ -220,15 +280,8 @@ const speech = (needVoice) => {
             window.speechSynthesis.resume();
             setPromptText('朗读已恢复');
         }
-        played = !played;
+        document.body.setAttribute('played', !played);
     }
-    document.body.setAttribute('played', played);
-    document.body.setAttribute('lastText', text);
-    msg.addEventListener('end', () => {
-        document.body.setAttribute('played', false);
-        document.body.removeAttribute('lastText');
-        setPromptText('朗读已结束');
-    });
 }
 
 // 复制
@@ -397,7 +450,16 @@ const pageChange = () => {
     year = hash.split('/')[0],
     month = hash.split('/')[1],
     day = hash.split('/')[2];
-    if (hash) {
+    if (year) {
+        document.body.setAttribute('year', year);
+    }
+    if (month) {
+        document.body.setAttribute('month', month);
+    }
+    if (day) {
+        document.body.setAttribute('day', day);
+    }
+    if (year && month && day) {
         getText(year, month, day);
     }
 };
@@ -408,7 +470,7 @@ const init = () => {
     playBtn = document.querySelector('#musicControl').querySelector('.btn'),
     lyric = document.querySelector('#lyric'),
     date = document.querySelector('#date'),
-    homeTitle = home.querySelector('div'),
+    homeTitle = home.querySelector('.title'),
     btn = document.querySelector('#btnBox').querySelectorAll('.btn'),
     // 初始化LMusic
     music = new LMusic({
@@ -424,7 +486,7 @@ const init = () => {
     document.title = title;
     date.innerHTML = title;
     homeTitle.innerHTML = `&nbsp;${title}`;
-    home.addEventListener('click', () => {
+    new Btn(home, () => {
         const now = document.querySelector('.now'),
         main = document.querySelector('main');
         if (now) {
@@ -440,14 +502,14 @@ const init = () => {
         document.body.removeAttribute('day');
         location.hash = '';
     });
-    playBtn.addEventListener('click', () => {
+    new Btn(playBtn, () => {
         if (music.paused) {
             music.play();
         } else {
             music.pause();
         }
     });
-    lyric.addEventListener('click', (e) => {
+    new Btn(lyric, (e) => {
         document.querySelector('#music').style.transform = 'translateY(0)';
         e.preventDefault();
     });
@@ -455,7 +517,7 @@ const init = () => {
     if ('speechSynthesis' in window) {
         let needVoice;
         document.body.setAttribute('played', false);
-        btn[0].addEventListener('click', () => {
+        new Btn(btn[0], () => {
             speech(needVoice);
         });
         const timer = setInterval(() => {
@@ -481,19 +543,19 @@ const init = () => {
     } else {
         btn[0].classList.add('hide');
     }
-    btn[1].addEventListener('click', copy);
-    btn[2].addEventListener('click', screenshot);
-    btn[3].addEventListener('click', download);
-    btn[4].addEventListener('click', share);
-    document.querySelector('#music').querySelector('.return').addEventListener('click', () => {
+    new Btn(btn[1], copy);
+    new Btn(btn[2], screenshot);
+    new Btn(btn[3], download);
+    new Btn(btn[4], share);
+    new Btn(document.querySelector('#music').querySelector('.btn'), () => {
         document.querySelector('#music').style.transform = 'translateY(-100%)';
     });
     window.addEventListener('DOMContentLoaded', () => {
         music.functions.stateChange.add((paused) => {
             if (paused) {
-                playBtn.innerHTML = '&#xe602;';
+                playBtn.innerHTML = '&#xe007;';
             } else {
-                playBtn.innerHTML = '&#xe603;';
+                playBtn.innerHTML = '&#xe008;';
             }
         });
         music.functions.lyricChange.add((lyricText) => {
@@ -502,8 +564,8 @@ const init = () => {
         });
     });
     window.addEventListener('hashchange', pageChange);
-    getYears();
     pageChange();
+    getYears();
 };
 
 init();

@@ -3,13 +3,16 @@
     src: url('/font/btnFont.woff2');
 }
 
-@font-face {
-    font-family: 'LMusicBtnFont';
-    src: url('/LMusic/font/btnFont.woff2');
+*{
+    line-height: 2em;
+    color: var(--color);
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-*{
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+::-webkit-scrollbar {
+    width: 0;
 }
 
 :root {
@@ -27,14 +30,19 @@ html, body {
     width: 100%;
     height: 100%;
     background: var(--background);
-    color: var(--color);
     overflow: hidden;
-    -webkit-user-select: none;
-    user-select: none;
 }
 
-::-webkit-scrollbar {
-    width: 0;
+.love::before {
+    font-family: 'btnFont';
+    content: '\e000';
+    color: hsl(330, 70%, 55%);
+}
+
+.btn {
+    font-family: 'btnFont';
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 #left {
@@ -48,20 +56,12 @@ html, body {
 }
 
 #home {
-    font-family: 'btnFont';
     display: flex;
     width: 100%;
     font-size: 1.5vw;
-    line-height: 2em;
-    text-align: center;
     background: var(--first_background);
-    color: hsl(330, 70%, 55%);
     cursor: pointer;
     justify-content: center;
-}
-
-#home div {
-    color: var(--color);
 }
 
 aside {
@@ -74,32 +74,8 @@ aside {
     align-items: center;
 }
 
-#musicControl {
-    font-family: 'LMusicBtnFont';
-    display: flex;
-    padding: 0 2vh;
-    width: calc(100% - 4vh);
-    background: var(--first_background);
-    justify-content: center;
-    align-items: center;
-}
-
-#musicControl .btn {
-    font-size: 1.5vw;
-    line-height: 2em;
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-#lyric {
-    flex: 1;
-    margin-left: 1vh;
-    font-size: 1vw;
-    line-height: 3em;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    cursor: pointer;
-    overflow: hidden;
+aside.hide .yearContainer {
+    display: none;
 }
 
 .yearContainer {
@@ -115,7 +91,6 @@ aside {
     display: flex;
     width: 100%;
     font-size: 2vw;
-    line-height: 2em;
     justify-content: center;
     cursor: pointer;
 }
@@ -135,11 +110,14 @@ aside {
     margin-top: 0.5vw;
 }
 
+.hide .monthContainer {
+    display: none;
+}
+
 .month {
     display: flex;
     width: 100%;
     font-size: 1.5vw;
-    line-height: 2em;
     justify-content: center;
     cursor: pointer;
 }
@@ -152,6 +130,10 @@ aside {
     background: var(--dayContainer_background);
     align-items: center;
     overflow: auto;
+}
+
+.hide .dayContainer {
+    display: none;
 }
 
 .dayContainers {
@@ -188,12 +170,28 @@ aside {
     box-shadow: none;
 }
 
-.hide .monthContainer {
-    display: none;
+#musicControl {
+    display: flex;
+    padding: 0 2vh;
+    width: calc(100% - 4vh);
+    background: var(--first_background);
+    justify-content: center;
+    align-items: center;
 }
 
-.hide .dayContainer {
-    display: none;
+#musicControl .btn {
+    font-size: 1.5vw;
+}
+
+#lyric {
+    flex: 1;
+    margin-left: 1vh;
+    font-size: 1vw;
+    line-height: 3em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    overflow: hidden;
 }
 
 main {
@@ -209,32 +207,30 @@ main {
 }
 
 #info {
-    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
-.love {
-    font-family: 'btnFont';
-    display: inline-block;
+#info .love {
+    margin: 0 0.5vw;
     font-size: 2vw;
-    line-height: 2em;
-    color: hsl(330, 70%, 55%);
+}
+
+#info div {
+    display: inline-block;
 }
 
 #date {
-    display: inline-block;
     font-size: 2vw;
-    line-height: 2em;
 }
 
 #length {
-    display: inline-block;
     font-size: 1.25vw;
     line-height: 4vw;
 }
 
 .text {
     font-size: 1.5vw;
-    line-height: 2em;
     text-indent: 2em;
 }
 
@@ -249,19 +245,21 @@ main {
 }
 
 #btnBox .btn {
-    font-family: 'btnFont';
     display: flex;
     margin: 1vw;
     margin-top: 0;
     width: 3vw;
     height: 3vw;
-    border-radius: 50%;
     background: var(--first_background);
     color: var(--color);
     font-size: 1.5vw;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+}
+
+#btnBox .btn:hover {
+    background: var(--color);
+    color: var(--first_background);
 }
 
 #btnBox .btn.hide {
@@ -297,13 +295,13 @@ main {
     transition: all 1s;
 }
 
-#music .return {
-    font-family: 'btnFont';
+#music .btn {
     position: absolute;
     left: 2vh;
     bottom: 2vh;
     width: 3vh;
     height: 3vh;
     font-size: 3vh;
-    cursor: pointer;
+    line-height: 1em;
+    border-radius: unset;
 }
