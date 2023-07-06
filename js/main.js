@@ -4,7 +4,14 @@
     // 文章日期信息容器
     date = article.querySelector('#date'),
     // 文章字数信息容器
-    length = article.querySelector('#length');
+    length = article.querySelector('#length'),
+    // 加载状态
+    state = {},
+    // 文章列表
+    list = [];
+
+    // 二维码
+    let qrcode;
     
     // 按钮对象
     class Btn {
@@ -48,6 +55,17 @@
                 }
                 this.element.classList.add('now');
             });
+            list.push(`${year}/${month}/${day}`);
+            state[year][month].now++;
+            if (state[year][month].now == state[year][month].need) {
+                state[year].now++;
+                if (state[year].now == state[year].need) {
+                    state.now++;
+                    if (state.now == state.need) {
+                        pageInit();
+                    }
+                }
+            }
         }
     }
 
@@ -157,10 +175,10 @@
 
     // 获取当前所需日记信息
     function getInfo() {
-        const body = document.body,
-        year = body.getAttribute('year'),
-        month = body.getAttribute('month'),
-        day = body.getAttribute('day');
+        const hash = location.hash.replace('#', '').split('/'),
+        year = hash.length == 3 ? hash[0] : null,
+        month = hash.length == 3 ? hash[1] : null,
+        day = hash.length == 3 ? hash[2] : null;
         return {
             year,
             month,
@@ -175,11 +193,15 @@
     }
 
     // 获取日记文本
-    function getText() {
+    function getText(path) {
         const {year, month, day} = getInfo();
-        get(`page/${year}/${month}/${day}.txt`)
+        get(path ? path : `page/${year}/${month}/${day}.txt`)
         .then(text => {
-            date.innerHTML = `${year}年${month}月${day}日`;
+            if (path) {
+                date.innerHTML = path.replace('.txt', '');
+            } else {
+                date.innerHTML = `${year}年${month}月${day}日`;
+            }
             text = deleteAll(text, '\r').split('\n');
             while (article.querySelector('.text')) {
                 article.removeChild(article.querySelector('.text'));
@@ -198,9 +220,11 @@
     // 获取日期信息
     function getDays(monthContainer, hashMonth, hashYear, month, year) {
         get(`page/${year}/${month}/index.txt`)
-        .then(days => {
+        .then((days) => {
             days = deleteAll(days, '\r').split('\n');
-            const hashDay = document.body.getAttribute('day'),
+            state[year][month].need = days.length;
+            // 获取需要的日期
+            const hashDay = getInfo().day,
             {element, children} = new DayContainer(days, monthContainer, hashDay, hashMonth, hashYear, month, year),
             needLine = document.body.getAttribute('needLine');
             if (hashYear == year && hashMonth == month) {
@@ -217,12 +241,17 @@
     // 获取月份信息
     function getMonths(monthsContainer, hashYear, year) {
         get(`page/${year}/index.txt`)
-        .then(months => {
-            months = deleteAll(months, '\r').split('\n');
+        .then((months) => {
             // 获取需要的月份
-            const hashMonth = document.body.getAttribute('month');
+            const hashMonth = getInfo().month;
+            months = deleteAll(months, '\r').split('\n');
+            state[year].need = months.length;
             // 创造月份按钮
             for (const month of months) {
+                state[year][month] = {
+                    need: 0,
+                    now: 0
+                };
                 new MonthContainer(monthsContainer, hashMonth, hashYear, month, year);
             }
         });
@@ -231,12 +260,18 @@
     // 获取年份信息
     function getYears() {
         get('page/index.txt')
-        .then(years => {
-            years = deleteAll(years, '\r').split('\n');
+        .then((years) => {
             // 获取需要的年份
-            const hashYear = document.body.getAttribute('year');
+            const hashYear = getInfo().year;
+            years = deleteAll(years, '\r').split('\n');
+            state.need = years.length;
+            state.now = 0;
             // 创造年份按钮
             for (const year of years) {
+                state[year] = {
+                    need: 0,
+                    now: 0
+                };
                 new YearContainer(hashYear, year);
             }
         });
@@ -273,7 +308,7 @@
     };
 
     // 朗读
-    const speech = (needVoice) => {
+    function speech(needVoice) {
         let text = getArticleText(),
         played = document.body.getAttribute('played') == 'true',
         lastText = document.body.getAttribute('lastText');
@@ -312,9 +347,9 @@
     }
 
     // 复制
-    const copy = () => {
-        navigator.clipboard.writeText(getArticleText());
-        setPromptText('复制成功');
+    function copy() {
+        navigator.clipboard.writeText(getArticleText())
+        .then(() => setPromptText('复制成功'), () => setPromptText('复制失败'));
     };
 
     // 截图
@@ -352,7 +387,6 @@
                                 context = canvas.getContext('2d'),
                                 clipCanvas = document.createElement('canvas'),
                                 clipContext = clipCanvas.getContext('2d'),
-                                a = document.createElement('a'),
                                 info = document.querySelector('#info'),
                                 width = info.offsetWidth / 0.7,
                                 height = article.scrollHeight + width * 0.06;
@@ -362,24 +396,32 @@
                                 clipCanvas.width = width * 0.8;
                                 clipCanvas.height = height;
                                 clipContext.drawImage(canvas, width * 0.1, 0, width * 0.8, height, 0, 0, width * 0.8, height);
-                                a.href = clipCanvas.toDataURL('image/png');
-                                a.download = `${title}-${year}年${month}月${day}日.png`;
-                                a.click();
+                                clipCanvas.toBlob((blob) => {
+                                    if (window.ClipboardItem) {
+                                        const data = [new ClipboardItem({
+                                            [blob.type]: blob
+                                        })];
+                                        navigator.clipboard.write(data)
+                                        .then(() => setPromptText('截图成功'), () => setPromptText('截图失败'));
+                                    } else {
+                                        const a = document.createElement('a');
+                                        a.href = clipCanvas.toDataURL('image/png');
+                                        a.download = `笨蛋日记-${year}年${month}月${day}日`;
+                                        a.click();
+                                    }
+                                });
                             });
                         });
                     });
                 });
             });
-            setPromptText('正在截图');
         }
     }
 
     // 下载
     const download = () => {
         const a = document.createElement('a'),
-        year = document.body.getAttribute('year'),
-        month = document.body.getAttribute('month'),
-        day = document.body.getAttribute('day');
+        {year, month, day} = getInfo();
         if (year) {
             a.href = `page/${year}/${month}/${day}.txt`;
             a.download = `${title}-${year}年${month}月${day}日.txt`;
@@ -403,23 +445,21 @@
 
     // hash值改变时改变页面
     function pageChange() {
-        const hash = location.hash.replace('#', ''),
-        year = hash.split('/')[0],
-        month = hash.split('/')[1],
-        day = hash.split('/')[2];
-        if (year) {
-            document.body.setAttribute('year', year);
-        }
-        if (month) {
-            document.body.setAttribute('month', month);
-        }
-        if (day) {
-            document.body.setAttribute('day', day);
-        }
-        if (year && month && day) {
-            getText(year, month, day);
+        qrcode.makeCode(location.href);
+        if (location.hash != '') {
+            const {year, month, day} = getInfo();
+            if (list.indexOf(`${year}/${month}/${day}`) > 0 || location.hash == '#') {
+                getText();
+            } else {
+                getText('404 Not Found.txt');
+            }
         }
     };
+
+    // 页面初始化
+    function pageInit() {
+        pageChange();
+    }
 
     // 初始化函数
     function init() {
@@ -507,6 +547,14 @@
         new Btn(document.querySelector('#music').querySelector('.btn'), () => {
             document.querySelector('#music').style.transform = 'translateY(-100%)';
         });
+        qrcode = new QRCode(document.querySelector("#qrcode"), {
+            text: location.href,
+            width: 128,
+            height: 128,
+            colorDark : "hsl(335, 80%, 35%)",
+            colorLight : 'rgba(255, 255, 255, 0)',
+            correctLevel : QRCode.CorrectLevel.M
+        });
         window.addEventListener('DOMContentLoaded', () => {
             music.functions.stateChange.add((paused) => {
                 if (paused) {
@@ -521,7 +569,6 @@
             });
         });
         window.addEventListener('hashchange', pageChange);
-        pageChange();
         getYears();
     };
 

@@ -281,7 +281,7 @@ article {
     margin-top: 0;
     width: 3vw;
     height: 3vw;
-    background: var(--first_background);
+    background: var(--main_background);
     color: var(--color);
     font-size: 1.5vw;
     align-items: center;
@@ -290,11 +290,38 @@ article {
 
 #btnBox .btn:hover {
     background: var(--color);
-    color: var(--first_background);
+    color: var(--main_background);
 }
 
 #btnBox .btn.hide {
     display: none;
+}
+
+#btnBox :nth-child(5):hover ~ #qrcode {
+    display: flex;
+}
+
+#qrcode {
+    position: fixed;
+    display: none;
+    bottom: 1vw;
+    right: 5.5vw;
+    width: 7vw;
+    height: 7vw;
+    background: var(--color);
+    border-radius: 1.5vw;
+    justify-content: center;
+    align-items: center;
+}
+
+#qrcode canvas {
+    width: 5vw;
+    height: 5vw;
+}
+
+#qrcode img {
+    width: 5vw;
+    height: 5vw;
 }
 
 #music {
