@@ -1,18 +1,7 @@
+/* 按钮字体 */
 @font-face {
     font-family: 'btnFont';
     src: url('/font/btnFont.woff2');
-}
-
-*{
-    line-height: 2em;
-    color: var(--color);
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-::-webkit-scrollbar {
-    width: 0;
 }
 
 :root {
@@ -24,13 +13,17 @@
     --dayContainer_background: hsl(335, 50%, 50%);
 }
 
-html, body {
-    display: flex;
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--background);
-    overflow: hidden;
+* {
+    line-height: 2em;
+    color: var(--color);
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    scrollbar-width: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+::-webkit-scrollbar {
+    width: 0;
 }
 
 .love::before {
@@ -45,10 +38,18 @@ html, body {
     cursor: pointer;
 }
 
-#left {
+html, body {
+    display: flex;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background);
+}
+
+aside {
     display: flex;
     flex-direction: column;
-    width: 15%;
+    width: 15vw;
     height: 100%;
     background: var(--main_background);
     justify-content: center;
@@ -57,6 +58,7 @@ html, body {
 
 #home {
     display: flex;
+    margin-top: 1.5vw;
     width: 100%;
     font-size: 1.5vw;
     background: var(--first_background);
@@ -64,17 +66,17 @@ html, body {
     justify-content: center;
 }
 
-aside {
+nav {
+    flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: calc(100% - 9vw);
     background: var(--main_background);
     justify-content: center;
     align-items: center;
 }
 
-aside.hide .yearContainer {
+nav.hide .yearContainer {
     display: none;
 }
 
@@ -138,19 +140,19 @@ aside.hide .yearContainer {
 
 .dayContainers {
     display: flex;
-    margin: calc((100% - 10vw) / 6) 0;
+    margin: calc(5vw / 6) 0;
     width: 100%;
 }
 
 .dayContainers ~ .dayContainers {
     display: flex;
-    margin: 0 0 calc((100% - 10vw) / 6);
+    margin: 0 0 calc(5vw / 6);
     width: 100%;
 }
 
 .day {
     display: flex;
-    margin-left: calc((100% - 10vw) / 6);
+    margin-left: calc(5vw / 6);
     width: 2vw;
     height: 2vw;
     font-size: 1vw;
@@ -172,6 +174,7 @@ aside.hide .yearContainer {
 
 #musicControl {
     display: flex;
+    margin-bottom: 1.5vw;
     padding: 0 2vh;
     width: calc(100% - 4vh);
     background: var(--first_background);
@@ -195,12 +198,24 @@ aside.hide .yearContainer {
 }
 
 main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+main .place {
+    display: flex;
+    flex-direction: column;
+    height: 3vw;
+}
+
+article {
     display: flex;
     flex-direction: column;
     margin: auto;
     padding: 2vw;
-    width: 70%;
-    max-height: 80%;
+    width: 70vw;
+    max-height: calc(100% - 10vw);
     background: var(--main_background);
     border-radius: 1vw;
     overflow: auto;
@@ -217,7 +232,8 @@ main {
 }
 
 #info div {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
 }
 
 #date {
@@ -226,12 +242,27 @@ main {
 
 #length {
     font-size: 1.25vw;
-    line-height: 4vw;
 }
 
 .text {
     font-size: 1.5vw;
     text-indent: 2em;
+}
+
+#prompt {
+    --length: 0;
+    display: none;
+    margin: 0.5vw auto;
+    padding: 0 0.5vw;
+    height: 2vw;
+    font-size: 1vw;
+    border-radius: 1vw;
+    background: var(--first_background);
+    align-items: center;
+}
+
+#prompt.show {
+    display: flex;
 }
 
 #btnBox {
@@ -264,24 +295,6 @@ main {
 
 #btnBox .btn.hide {
     display: none;
-}
-
-#prompt {
-    --length: 0;
-    position: fixed;
-    display: none;
-    right: calc((85% - 1vw * var(--length)) / 2);
-    bottom: 1vw;
-    padding: 0 0.5vw;
-    height: 2vw;
-    font-size: 1vw;
-    border-radius: 1vw;
-    background: var(--first_background);
-    align-items: center;
-}
-
-#prompt.show {
-    display: flex;
 }
 
 #music {

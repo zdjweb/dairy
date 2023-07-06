@@ -1,0 +1,59 @@
+@font-face {
+    font-family: 'btnFont';
+    src: url('font/btnFont.woff2');
+}
+
+* {
+    line-height: 2em;
+}
+
+foreignObject {
+    background: hsl(335, 50%, 80%);
+    color: #EEEEEE;
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    margin: 3vw auto;
+    padding: 2vw;
+    width: 70%;
+    background: hsl(335, 80%, 35%);
+    border-radius: 1vw;
+    overflow: auto;
+}
+
+#info {
+    display: flex;
+    justify-content: center;
+}
+
+.love {
+    font-family: 'btnFont';
+    margin: 0 0.5vw;
+    width: 2vw;
+    font-size: 2vw;
+    background-image: url(${love});
+    background-position: center;
+    background-size: 2vw 2vw;
+    background-repeat: no-repeat;
+    color: rgba(0, 0, 0, 0);
+}
+
+#info div {
+    display: inline-flex;
+    align-items: center;
+}
+
+#date {
+    font-size: 2vw;
+}
+
+#length {
+    font-size: 1.25vw;
+}
+
+.text {
+    font-size: 1.5vw;
+    text-indent: 2em;
+}
